@@ -1,0 +1,107 @@
+AI Agent for Flight Booking, Cancellation & Immigration Notifications (Freestyle Track)
+
+Abstract:
+A compact multi-agent chatbot that handles flight booking/cancellation and immigration process notifications using LLMs + RAG and Google APIs for searches and notifications.
+
+Problem statement:
+Booking and immigration updates are manual, error-prone and slow. Users need an automated assistant to manage bookings, cancellations and timely immigration alerts.
+
+Existing System:
+Multiple siloed systems (airline portals, emails, manual alerts) with inconsistent notifications.
+
+Proposed System:
+A multi-agent LLM-powered chatbot using Retrieval-Augmented Generation (RAG) for domain docs, Google APIs for flight/immigration lookups, and session+memory services to manage long-running flows.
+
+Project Title:
+Automated Flight & Immigration Assistant (AFIA) - Freestyle Track
+
+Block Diagram (text):
+User -> Chatbot Frontend -> Orchestrator (Parallel/Sequential agents) -> RAG Store (Embeddings) & LLM -> External APIs (Google Flights/Search, Airline APIs) -> Notification Service (email/SMS)
+
+Flow Diagram (text):
+1. User request -> 2. Intent routing -> 3. If booking: collect details -> 4. Call booking agent -> 5. Confirm & store session -> 6. Send notifications & immigration checklist.
+
+Implementations using AI/ML:
+- LLM for dialog and orchestration (OpenAI or other)
+- RAG: store airline/immigration docs in vector DB (FAISS/Chroma)
+- Embeddings: sentence-transformers
+- Agents: Orchestrator for sequential/parallel flows, long-running sessions with resume support
+
+Advantages:
+- Faster bookings and cancellations
+- Context-aware immigration alerts
+- Reduced manual effort and errors
+
+Applications:
+- Travel agencies, corporate travel desks, airport kiosks
+
+Future Scope:
+- Integrate real-time airline APIs, biometric pre-checks, multi-lingual support, advanced personalization via long-term memory
+
+Conclusion:
+A concise, deployable agent architecture combining LLM, RAG and Google APIs to automate flight & immigration workflows.
+
+References:
+- OpenAI API docs
+- FAISS / Chroma / sentence-transformers
+- Airline API docs (example: Amadeus, Sabre)
+
+
+Too-short installation (run in terminal):
+pip install openai flask sentence-transformers faiss-cpu python-dotenv python-pptx reportlab
+# For production: use Docker, set environment variables OPENAI_API_KEY and GOOGLE_API_KEY
+
+
+Code sample below:
+"""
+Automated Flight & Immigration Assistant (minimal example)
+Includes: GOOGLE_API_KEY placeholder, LLM (OpenAI) + simple RAG sketch.
+Save as agent_code.py
+"""
+import os
+from flask import Flask, request, jsonify
+import openai
+
+# Put your keys here (or export as environment variables)
+GOOGLE_API_KEY = "YOUR_GOOGLE_API_KEY"   # <--- include GOOGLE_API_KEY as requested
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "YOUR_OPENAI_API_KEY")
+
+openai.api_key = OPENAI_API_KEY
+
+app = Flask(__name__)
+
+# Simple in-memory 'vector store' stub for RAG (replace with FAISS/Chroma in prod)
+RAG_DOCS = [
+    {"id":"immig_rules_us","text":"US immigration checklist: passport, visa, I-94, ..."},
+    {"id":"baggage_rules","text":"Baggage limits differ by airline..."},
+]
+
+def simple_retrieve(query, k=2):
+    # naive RAG: return docs whose text contains tokens from query (placeholder)
+    q = query.lower()
+    res = [d for d in RAG_DOCS if any(tok in d["text"].lower() for tok in q.split()[:3])]
+    return res[:k]
+
+def call_llm(prompt, temperature=0.2):
+    resp = openai.ChatCompletion.create(
+        model="gpt-4o-mini",  # replace with available model
+        messages=[{"role":"system","content":"You are an assistant for flight bookings and immigration notifications."},
+                  {"role":"user","content":prompt}],
+        temperature=temperature,
+        max_tokens=400
+    )
+    return resp["choices"][0]["message"]["content"]
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.json or {}
+    user_msg = data.get("message","")
+    # Step 1: retrieve related docs (RAG)
+    docs = simple_retrieve(user_msg)
+    context = "\n\n".join([d["text"] for d in docs])
+    prompt = f"Context: {context}\nUser: {user_msg}\nProvide concise actionable steps."
+    answer = call_llm(prompt)
+    return jsonify({"answer": answer, "retrieved": [d["id"] for d in docs]})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=7860, debug=True)
