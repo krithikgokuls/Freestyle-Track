@@ -1,0 +1,53 @@
+What I Built – Project Description (Under 1500 Words)
+
+Problem Statement
+Flight booking, cancellation, and immigration processes are scattered across multiple platforms, causing travelers to miss important updates or struggle with manual workflows. This leads to delays, confusion, and dependency on support channels. My AI Agent solves this by centralizing bookings, cancellations, and immigration notifications in one intelligent assistant.
+
+Why Agents?
+Travel tasks require multi-step reasoning, long workflows, external tool usage, and memory retention. Agents are ideal because they support:
+- Multi-step autonomous reasoning
+- Parallel + sequential workflows
+- RAG for retrieving immigration rules
+- Google API for real-time flight data
+- Long-running operations (pause/resume)
+- Session memory and long-term memory
+
+What I Created – Architecture
+A Multi-Agent LLM Travel Assistant:
+1. Chatbot Interface Agent
+2. Flight Management Agent (booking/cancellation)
+3. Immigration Documentation Agent (RAG-powered)
+4. RAG Knowledge Layer (visa rules, airline info)
+5. Session & Long-Term Memory System
+6. Tools: Google API, code execution, custom tools
+
+High-Level Flow:
+User → Chat Agent → Flight/Immigration Agents → LLM → Google API + RAG → Responses
+
+Demo – Features
+- Book flights via Google API search
+- Cancel existing bookings
+- Retrieve immigration document requirements
+- Generate personalized checklists
+- Send reminders for document deadlines
+- Store user travel preferences
+- Provide real-time airport & visa updates
+
+The Build – Tools Used
+- Python (Flask backend)
+- GPT-based LLMs
+- FAISS/Chroma Vector DB for RAG
+- Sentence-transformers embeddings
+- Google Search API
+- Multi-agent orchestration system
+- Memory manager for sessions
+
+If I Had More Time
+- Integrate real airline booking APIs (Amadeus/Sabre)
+- Add payment gateway support
+- Implement passport/visa OCR with image models
+- Introduce multilingual support
+- Add push notifications via WhatsApp/SMS
+- Build travel recommendation engine
+- Provide offline RAG access
+
